@@ -22,10 +22,15 @@ class CentralWidget(QWidget):
         self.interval = 1000
 
         self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(250, 3000)
+        self.slider.setValue(self.interval)
+        self.slider.valueChanged.connect(self.timer_interval)
 
         self.push_button_start = QPushButton("Start")
+        self.push_button_start.clicked.connect(self.timer_start)
 
         self.push_button_stop = QPushButton("Stopp")
+        self.push_button_stop.clicked.connect(self.timer_stop)
 
         self.line_edit_min = QLineEdit(str(self.temperature_min))
         self.line_edit_min.textChanged.connect(self.set_temperature_min)
@@ -53,13 +58,15 @@ class CentralWidget(QWidget):
         self.timer.timeout.connect(self.timer_timeout)
 
     def timer_interval(self, value):
-        pass
+        self.interval = value
+
+        self.timer.setInterval(self.interval)
 
     def timer_start(self):
-        pass
+        self.timer.start(1000)
 
     def timer_stop(self):
-        pass
+        self.timer.stop()
 
     def timer_timeout(self):
         scale = 10.0
@@ -73,7 +80,12 @@ class CentralWidget(QWidget):
         self.set_temperature.emit(random_as_float)
 
     def set_temperature_min(self, text):
-        pass
+        self.temperature_min = float(text)
+
+        self.chart_view.set_temperature_range(self.temperature_min, self.temperature_max)
 
     def set_temperature_max(self, text):
-        pass
+        self.temperature_max = float(text)
+
+        self.chart_view.set_temperature_range(self.temperature_min, self.temperature_max)
+
